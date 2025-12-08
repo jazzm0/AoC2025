@@ -1,14 +1,18 @@
 def max_joltage(bank):
-    mj = 0
-    for i in range(len(bank)):
-        for j in range(i + 1, len(bank)):
-            mj = max(mj, int(bank[i] + bank[j]))
-    return mj
+    k = 12
+    stack = []
+    to_remove = len(bank) - k
+    for digit in bank:
+        while stack and to_remove > 0 and stack[-1] < digit:
+            stack.pop()
+            to_remove -= 1
+        stack.append(digit)
+    return int(''.join(stack[:k]))
 
 
 solution = 0
 
-with open('day_3.txt') as ifile:
+with open('day_3_small.txt') as ifile:
     for line in ifile:
         if line:
             bank = line.strip()
