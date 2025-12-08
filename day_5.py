@@ -17,41 +17,38 @@ def merge_ranges(ranges):
     return merged
 
 
-def count_fresh_ids(path):
-    ranges = []
-    ingredients = []
-    with open(path) as f:
-        for line in f:
-            s = line.strip()
-            if not s:
-                continue
-            if "-" in s:
-                a, b = s.split("-")
-                ranges.append((int(a), int(b)))
-            else:
-                ingredients.append(int(s))
 
-    ranges.sort(key=lambda x: x[0])
-    ranges = merge_ranges(ranges)
-    lows = [r[0] for r in ranges]
-    prefix_max_high = []
-    m = -1
-    for _, hi in ranges:
-        m = max(m, hi)
-        prefix_max_high.append(m)
+ranges = []
+ingredients = []
+with open("day_5.txt") as f:
+    for line in f:
+        s = line.strip()
+        if not s:
+            continue
+        if "-" in s:
+            a, b = s.split("-")
+            ranges.append((int(a), int(b)))
+        else:
+            ingredients.append(int(s))
 
-    total = 0
-    for x in ingredients:
-        idx = bisect.bisect_right(lows, x) - 1
-        if idx >= 0 and x <= prefix_max_high[idx]:
-            total += 1
+ranges.sort(key=lambda x: x[0])
+ranges = merge_ranges(ranges)
+lows = [r[0] for r in ranges]
+prefix_max_high = []
+m = -1
+for _, hi in ranges:
+    m = max(m, hi)
+    prefix_max_high.append(m)
 
-    print(total)
-    total_fresh = 0
-    for idx in range(len(ranges)):
-        total_fresh += ranges[idx][1] - ranges[idx][0] + 1
-    print(total_fresh)
+total = 0
+for x in ingredients:
+    idx = bisect.bisect_right(lows, x) - 1
+    if idx >= 0 and x <= prefix_max_high[idx]:
+        total += 1
 
+print(total)
+total_fresh = 0
+for idx in range(len(ranges)):
+    total_fresh += ranges[idx][1] - ranges[idx][0] + 1
+print(total_fresh)
 
-if __name__ == "__main__":
-    count_fresh_ids('day_5.txt')
