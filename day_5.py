@@ -5,7 +5,6 @@ def merge_ranges(ranges):
     if not ranges:
         return []
 
-    ranges = sorted(ranges, key=lambda r: r[0])
     merged = [ranges[0]]
 
     for start, end in ranges[1:]:
