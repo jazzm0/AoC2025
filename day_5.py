@@ -1,6 +1,23 @@
 import bisect
 
 
+def merge_ranges(ranges):
+    if not ranges:
+        return []
+
+    ranges = sorted(ranges, key=lambda r: r[0])
+    merged = [ranges[0]]
+
+    for start, end in ranges[1:]:
+        last_start, last_end = merged[-1]
+        if start <= last_end or (start == last_end + 1):
+            merged[-1] = (last_start, max(last_end, end))
+        else:
+            merged.append((start, end))
+
+    return merged
+
+
 def count_fresh_ids(path):
     ranges = []
     ingredients = []
@@ -16,6 +33,7 @@ def count_fresh_ids(path):
                 ingredients.append(int(s))
 
     ranges.sort(key=lambda x: x[0])
+    ranges = merge_ranges(ranges)
     lows = [r[0] for r in ranges]
     prefix_max_high = []
     m = -1
@@ -30,6 +48,10 @@ def count_fresh_ids(path):
             total += 1
 
     print(total)
+    total_fresh = 0
+    for idx in range(len(ranges)):
+        total_fresh += ranges[idx][1] - ranges[idx][0] + 1
+    print(total_fresh)
 
 
 if __name__ == "__main__":
