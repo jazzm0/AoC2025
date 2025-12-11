@@ -23,7 +23,6 @@ for i in range(len(unconnected_boxes)):
         same_distance.append((box1, box2))
         distances[dist] = same_distance
 
-# Sort all pairs by distance
 sorted_distances = sorted(distances.keys())
 sorted_pairs = []
 for d in sorted_distances:
@@ -39,26 +38,25 @@ def find_circuit_index(box):
     return None
 
 
-# Connect the first 1000 closest pairs
 connections_to_make = 1000
 for k in range(connections_to_make):
     box1, box2 = sorted_pairs[k]
-    i1 = find_circuit_index(box1)
-    i2 = find_circuit_index(box2)
+    index_one = find_circuit_index(box1)
+    index_2 = find_circuit_index(box2)
 
-    if i1 is None and i2 is None:
+    if index_one is None and index_2 is None:
         new_circuit = set()
         new_circuit.add(box1)
         new_circuit.add(box2)
         already_connected.append(new_circuit)
-    elif i1 is not None and i2 is None:
-        already_connected[i1].add(box2)
-    elif i1 is None and i2 is not None:
-        already_connected[i2].add(box1)
+    elif index_one is not None and index_2 is None:
+        already_connected[index_one].add(box2)
+    elif index_one is None and index_2 is not None:
+        already_connected[index_2].add(box1)
     else:
-        if i1 != i2:
-            already_connected[i1].update(already_connected[i2])
-            already_connected.pop(i2)
+        if index_one != index_2:
+            already_connected[index_one].update(already_connected[index_2])
+            already_connected.pop(index_2)
 
 lengths = [len(c) for c in already_connected]
 lengths.sort(reverse=True)
