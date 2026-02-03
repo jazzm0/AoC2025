@@ -28,7 +28,8 @@ sorted_pairs = []
 for d in sorted_distances:
     sorted_pairs.extend(distances[d])
 
-already_connected = []
+# Initialize each box in its own circuit
+already_connected = [{box} for box in unconnected_boxes]
 
 
 def find_circuit_index(box):
@@ -38,27 +39,19 @@ def find_circuit_index(box):
     return None
 
 
-connections_to_make = 1000
+connections_to_make = 100000
 for k in range(connections_to_make):
     box1, box2 = sorted_pairs[k]
     index_one = find_circuit_index(box1)
     index_2 = find_circuit_index(box2)
 
-    if index_one is None and index_2 is None:
-        new_circuit = set()
-        new_circuit.add(box1)
-        new_circuit.add(box2)
-        already_connected.append(new_circuit)
-    elif index_one is not None and index_2 is None:
-        already_connected[index_one].add(box2)
-    elif index_one is None and index_2 is not None:
-        already_connected[index_2].add(box1)
-    else:
-        if index_one != index_2:
-            already_connected[index_one].update(already_connected[index_2])
-            already_connected.pop(index_2)
+    if index_one != index_2:
+        # Merge into the circuit with the smaller index
+        if index_one > index_2:
+            index_one, index_2 = index_2, index_one
+        already_connected[index_one].update(already_connected[index_2])
+        already_connected.pop(index_2)
 
-lengths = [len(c) for c in already_connected]
-lengths.sort(reverse=True)
-
-print(lengths[0] * lengths[1] * lengths[2])
+        if len(already_connected) == 1:
+            print(box1[0] * box2[0])
+            break
